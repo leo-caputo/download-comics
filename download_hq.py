@@ -27,30 +27,33 @@ def download_pages(path):
               'value': '1',
               'domain': 'readcomiconline.li'
               }
+    try:
+        options = webdriver.ChromeOptions()
+        options.add_argument('headless')
+        driver = webdriver.Chrome(options=options)
+    except WebDriverException:
+        print(f"Web drive for Chrome not found, please install it.")
+    else:
+        driver.get(url)
+        driver.add_cookie(cookie)
+        driver.get(url)
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')
-    driver = webdriver.Chrome(options=options)
-    driver.get(url)
-    driver.add_cookie(cookie)
-    driver.get(url)
+        html_content = driver.page_source.split('\n')
 
-    html_content = driver.page_source.split('\n')
+        driver.quit()
 
-    driver.quit()
+        urls = []
 
-    urls = []
+        for line in html_content:
+            if "https://2.bp.blogspot.com" in line:
+                start = line.find('https')
+                end = line.find('" onerror')
+                urls.append(line[start:end])
 
-    for line in html_content:
-        if "https://2.bp.blogspot.com" in line:
-            start = line.find('https')
-            end = line.find('" onerror')
-            urls.append(line[start:end])
+        for i in range(len(urls)):
+            response = requests.get(urls[i])
+            end = path.find('?')
+            file_path = f'{dir_path}/{path[23:end]}/tpb-{i}.png'
 
-    for i in range(len(urls)):
-        response = requests.get(urls[i])
-        end = path.find('?')
-        file_path = f'{dir_path}/{path[23:end]}/tpb-{i}.png'
-
-        with open(file_path, 'wb') as file:
-            file.write(response.content)
+            with open(file_path, 'wb') as file:
+                file.write(response.content)
