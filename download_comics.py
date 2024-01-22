@@ -92,10 +92,7 @@ def download_pages(url, output, comics_name):
 
 def get_local_files(path):
     """List the comics pages on the local dir."""
-    # Specify the directory path you want to enumerate
-    # directory_path = f'{dir_path}'
 
-    # Use os.listdir() to get a list of all files and subdirectories in the directory
     os.chdir(path)
     dirs = os_sorted(os.listdir())
 
@@ -110,9 +107,7 @@ def get_local_files(path):
 
 
 def create_pdf(output):
-    """The PDF file name will be the same as the directory's name.
-    dir_name: The specific directory name, not the full path.
-    """
+    """The PDF file name will be the same as the directory's name."""
     os.chdir(output)
     local_dirs, image_paths = get_local_files(output)
 
